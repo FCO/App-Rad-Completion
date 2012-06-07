@@ -1,0 +1,11 @@
+_app_rad(){
+   COMPREPLY=();
+   line="";
+   for i in $(seq 0 $COMP_CWORD);
+   do
+      line=$line" "$(echo ${COMP_WORDS[$i]});
+   done;
+   COMPREPLY=( $(/usr/bin/app-rad-complete "$line") );
+   return 0;
+}
+complete -F _app_rad $(cat $HOME/.app-rad-commands)
