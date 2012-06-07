@@ -5,7 +5,7 @@ Copy the bin/app-rad to /etc/bash_completion.d/
     cp bin/app-rad /etc/bash_completion.d/
 
 Add your program name on the $HOME/.app-rad-commands file
-(remember to change the "your_app_rad_prog_name.pl" to the name of your program):
+(remember to substitute the "your_app_rad_prog_name.pl" by the name of your program):
 
     echo your_app_rad_prog_name.pl >> $HOME/.app-rad-commands
 
