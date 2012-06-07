@@ -11,7 +11,7 @@ sub remove_app_rad_prog {
 
    open my $progs_r, "<", $prog_files;
    open my $progs_w, ">", $prog_files;
-   print {$progs} $_, $/ for grep {$_ ne $del_prg} <$progs_r>;
+   print {$progs_w} $_, $/ for grep {$_ ne $del_prg} <$progs_r>;
 }
 
 sub new_app_rad_prog {
