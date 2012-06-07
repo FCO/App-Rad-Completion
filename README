@@ -1,3 +1,20 @@
+How to use it:
+
+Copy the bin/app-rad to /etc/bash_completion.d/
+
+    cp bin/app-rad /etc/bash_completion.d/
+
+Add your program name on the $HOME/.app-rad-commands file (remember to change the "your_app_rad_prog_name.pl" to the name of your program):
+
+    echo your_app_rad_prog_name.pl >> $HOME/.app-rad-commands
+
+Run as script your new completion code:
+
+   . /etc/bash_completion.d/app-rad
+
+
+
+
 App-Rad-Completion
 
 The README is used to introduce the module and provide instructions on
