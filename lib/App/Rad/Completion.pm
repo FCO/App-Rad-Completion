@@ -19,9 +19,10 @@ sub new_app_rad_prog {
    my $new_prg = shift;
 
    croak "File '$new_prg' does not exists" unless -f $new_prg;
+   my $prg_name = $1 if $new_prg =~ m{([^/]+)$};
 
    open my $progs, ">>", $prog_files;
-   print {$progs} $new_prg, $/;
+   print {$progs} $prg_name, $/;
 }
 
 sub create_string {

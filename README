@@ -4,7 +4,7 @@ Init the completion:
 
     bin/app-rad-completion init
 
-Run as script your new completion code:
+Rerun your .bashrc
 
    . ~/.bashrc
 

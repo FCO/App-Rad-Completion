@@ -20,6 +20,7 @@ sub init :Help(Initialize the completion) {
 sub add_program :Help(Set a new App::Rad based program to be completed) {
    my $c       = shift;
    my $new_prg = shift @{ $c->argv };
+   App::Rad::Completion->remove_app_rad_prog($new_prg);
    App::Rad::Completion->new_app_rad_prog($new_prg);
    "To make this changes efective on this terminal, execute:$/"
    . "   . ~/.bashrc"
@@ -27,8 +28,8 @@ sub add_program :Help(Set a new App::Rad based program to be completed) {
 
 sub remove_program :Help(Stop completing a program) {
    my $c       = shift;
-   my $new_prg = shift @{ $c->argv };
-   App::Rad::Completion->remove_app_rad_prog($new_prg);
+   my $del_prg = shift @{ $c->argv };
+   App::Rad::Completion->remove_app_rad_prog($del_prg);
    ""
 }
 
@@ -44,7 +45,8 @@ sub generate :Help(Generates data: bash_func, bashrc or complete) {
    my $c    = shift;
    my $file = shift @{ $c->argv };
 
-   die "You should pass 'bash_func', 'bashrc' or 'complete'" unless grep {$file eq $_} qw/bash_func complete bashrc/;
+   die "You should pass 'bash_func', 'bashrc' or 'complete'"
+      unless grep {$file eq $_} qw/bash_func complete bashrc/;
    $c->generate($file);
 }
 
