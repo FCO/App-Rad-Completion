@@ -17,7 +17,7 @@ sub init :Help(Initialize the completion) {
    ""
 }
 
-sub add_prg :Help(Set a new App::Rad based program to be completed) {
+sub add_program :Help(Set a new App::Rad based program to be completed) {
    my $c       = shift;
    my $new_prg = shift @{ $c->argv };
    App::Rad::Completion->new_app_rad_prog($new_prg);
@@ -25,7 +25,7 @@ sub add_prg :Help(Set a new App::Rad based program to be completed) {
    . "   . ~/.bashrc"
 }
 
-sub remove_prg :Help(Stop completing a program) {
+sub remove_program :Help(Stop completing a program) {
    my $c       = shift;
    my $new_prg = shift @{ $c->argv };
    App::Rad::Completion->remove_app_rad_prog($new_prg);
