@@ -1,7 +1,0 @@
-#!/usr/bin/perl
-
-use App::Rad::Completion;
-
-my $line = join " ", @ARGV;
-
-App::Rad::Completion->do_completion($line);
