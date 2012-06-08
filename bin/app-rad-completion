@@ -1,0 +1,122 @@
+#!/usr/bin/env perl
+
+use lib "lib";
+use App::Rad;
+use App::Rad::Completion;
+App::Rad->run;
+
+use strict;
+
+sub init :Help(Initialize the completion) {
+   my $c = shift;
+   push @{ $c->argv }, $0, "bashrc";
+   $c->execute("add_prg");
+   open my $bashrc, ">>", "$ENV{ HOME }/.bashrc" || die $!;
+   print {$bashrc} $c->generate("bashrc");
+   close $bashrc;
+   ""
+}
+
+sub add_prg :Help(Set a new App::Rad based program to be completed) {
+   my $c       = shift;
+   my $new_prg = shift @{ $c->argv };
+   App::Rad::Completion->new_app_rad_prog($new_prg);
+   "To make this changes efective on this terminal, execute:$/"
+   . "   . ~/.bashrc"
+}
+
+sub remove_prg :Help(Stop completing a program) {
+   my $c       = shift;
+   my $new_prg = shift @{ $c->argv };
+   App::Rad::Completion->remove_app_rad_prog($new_prg);
+   ""
+}
+
+sub complete :Help(Gets the actual line and makes it completion) {
+   my $c    = shift;
+   my $line = shift @{ $c->argv };
+
+   die "Please give a valid line." unless $line;
+   App::Rad::Completion->do_completion($line)
+}
+
+sub generate :Help(Generates data: bash_func, bashrc or complete) {
+   my $c    = shift;
+   my $file = shift @{ $c->argv };
+
+   die "You should pass 'bash_func', 'bashrc' or 'complete'" unless grep {$file eq $_} qw/bash_func complete bashrc/;
+   $c->generate($file);
+}
+
+sub App::Rad::generate {
+   my $c    = shift;
+   my $file = shift;
+
+   my $meth = "generate_$file";
+   $c->$meth
+}
+
+sub App::Rad::generate_bashrc {
+   my $c = shift;
+   $c->_proccess_data;
+   $c->_render("bashrc", cmd => $0)
+}
+
+sub App::Rad::generate_bash_func {
+   my $c = shift;
+   $c->_proccess_data;
+   my $progs;
+
+   $c->_render("bash_func", cmd => $0)
+}
+
+sub App::Rad::generate_complete {
+   my $c = shift;
+   $c->_proccess_data;
+   $c->_render("complete", progs => "\$(cat $ENV{ HOME }/.app-rad-commands)")
+}
+
+sub App::Rad::_render {
+   my $c    = shift;
+   my $file = shift;
+   my %vars = @_;
+   my $ret;
+   for(split $/, $c->stash->{data}->{ $file }) {
+      s/\[%\s*(\w+)\s*%\]/$vars{ $1 }/ge;
+      $ret .= $_ . $/;
+   }
+   $ret
+}
+
+sub App::Rad::_proccess_data {
+   my $c = shift;
+   my $file = "";
+   while(<DATA>) {
+      if(/^\s*@@\s*(.*)\s*$/) {
+         $file = $1;
+         next
+      }
+      $c->stash->{data}->{ $file } .= $_
+   }
+}
+
+__DATA__
+
+@@ bash_func
+_app_rad() {
+   COMPREPLY=();
+   line="";
+   for i in $(seq 0 $COMP_CWORD);
+   do
+      line=$line" "$(echo ${COMP_WORDS[$i]});
+   done;
+   COMPREPLY=( $([% cmd %] complete "$line") );
+   return 0;
+}
+
+@@ complete
+complete -F _app_rad [% progs %]
+
+@@ bashrc
+eval $([% cmd %] generate bash_func);
+eval $([% cmd %] generate complete);
