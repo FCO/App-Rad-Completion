@@ -12,6 +12,7 @@ WriteMakefile(
       ? ('LICENSE'=> 'perl')
       : ()),
     PL_FILES            => {},
+    EXE_FILES           => ["bin/app-rad-completion"]
     PREREQ_PM => {
         'Test::More' => 0,
         'App::Rad'   => 1.05,
