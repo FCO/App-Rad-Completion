@@ -8,10 +8,11 @@ App::Rad->run;
 use strict;
 
 sub init :Help(Initialize the completion) {
-   my $c = shift;
+   my $c    = shift;
+   my $file = shift @{ $c->argv };
    push @{ $c->argv }, $0, "bashrc";
    $c->execute("add_prg");
-   open my $bashrc, ">>", "$ENV{ HOME }/.bashrc" || die $!;
+   open my $bashrc, ">>", $c->decide_file($file) || die $!;
    print {$bashrc} $c->generate("bashrc");
    close $bashrc;
    ""
@@ -48,6 +49,29 @@ sub generate :Help(Generates data: bash_func, bashrc or complete) {
    die "You should pass 'bash_func', 'bashrc' or 'complete'"
       unless grep {$file eq $_} qw/bash_func complete bashrc/;
    $c->generate($file);
+}
+
+sub App::Rad::decide_file {
+   my $c    = shift;
+   my $file = shift;
+   if(not defined $file) {
+      if(-w "/etc/bash_completion.d/") {
+         $file = $c->bash_completiond_name
+      } else {
+         $file = $c->bashrc_name
+      }
+   }
+   $file
+}
+
+sub App::Rad::bashrc_name {
+   my $file = "$ENV{ HOME }/.bashrc";
+   $file
+}
+
+sub App::Rad::bash_completiond_name {
+   my $file = "/etc/bash_completion.d/app-rad";
+   $file
 }
 
 sub App::Rad::generate {
